@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+		<h3 style="font-style: italic;"> MeD Clinic </h3><br>
+		{% if current_user %}
+		<p>{{current_user.id}} {{current_user.password}}</p>
+		{% endif %}
+{% endblock %}
