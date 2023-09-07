@@ -1,5 +1,3 @@
-# CSC540-Hospital-Management
-Hospital Management Software Project for CSC 540 at SCSU
 
 # How to run
 Go to base project folder then do the following commands in order
