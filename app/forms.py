@@ -1,3 +1,4 @@
+from datetime import date
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SubmitField, StringField, PasswordField, SelectField, ValidationError, BooleanField, DateField
 from wtforms.validators import DataRequired, Optional
@@ -47,7 +48,70 @@ class PatientSearchForm(FlaskForm):
     first_name = StringField('First name')
     last_name = StringField('Last name')
     submit = SubmitField('Search')
+    
+class AppointmentSearchForm(FlaskForm):
+    date = DateField('Date', format='%Y-%m-%d', default=date.today())
+    doc_name = StringField('Doctor')
+    submit = SubmitField('Search')
 
-class CreateAppointmentDoctorForm(FlaskForm):
+class SelectDoctorAppointmentForm(FlaskForm):
+    doctor_name = StringField('Doctor')
+    submit = SubmitField('Continue')
+    
+class SelectPatientAppointmentForm(FlaskForm):
+    patient_name = StringField('Patient')
+    submit = SubmitField('Continue')
+
+class CreateAppointmentForm(FlaskForm):
     doctor_name = StringField('Doctor')
     submit = SubmitField('Search')
+
+class MedicationSearchForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    submit = SubmitField('Search')
+
+class MedicationForm(FlaskForm):
+    emp_id = StringField('Medication_ID', validators=[DataRequired()])
+    name = StringField('Medication_Name', validators=[DataRequired()])
+    department = StringField('Generic', validators=[DataRequired()])
+    position = StringField('Dosage', validators=[DataRequired()])
+    submit = SubmitField('submit')
+
+
+def pharmSignupForm(data):
+    if data=='doctor':
+         class SignupForm(FlaskForm):
+            emp_id = StringField('Doctor Employee ID', validators=[DataRequired()])
+            name = StringField('Name', validators=[DataRequired()])
+            department = StringField('Department', validators=[DataRequired()])
+            position = StringField('Position', validators=[DataRequired()])
+            password = PasswordField('Password', validators=[DataRequired()])
+            date = StringField('Date_Prescribed', validators=[DataRequired()])
+            diagnosis = StringField('Current_diagnosis_severity', validators=[DataRequired()])
+            amnt = StringField('refills', validators=[DataRequired()])
+            submit = SubmitField('Sign up')
+    else:
+        class SignupForm(FlaskForm):
+            emp_id = StringField('Pharmacy_ID', validators=[DataRequired()])
+            name = StringField('name', validators=[DataRequired()])
+            department = StringField('address', validators=[DataRequired()])
+            submit = SubmitField('submit')
+    return SignupForm()
+
+class AddPrescriptionForm(FlaskForm):
+    pharmacy_id = StringField('Pharmacy_ID', validators=[DataRequired()])
+    medication_id = StringField('Medication_ID', validators=[DataRequired()])
+    diagnosis = StringField('Diagnosis Severity', validators=[DataRequired()])
+    refills = StringField('Refills', validators=[DataRequired()])
+    submit = SubmitField('Add')
+
+class AppointmentTypeForm(FlaskForm):
+    admission_type = StringField('Admission Type')
+    exam_type = StringField('Exam Type')
+    submit = SubmitField('Create')
+
+def BuildEditAppointmentForm(stat):
+    class EditAppointmentForm(FlaskForm):
+        status = SelectField('Status', choices=['cancelled', 'not started', 'waiting','in progress', 'completed'], default=stat)
+        submit = SubmitField('Save')
+    return EditAppointmentForm()

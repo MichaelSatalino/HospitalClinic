@@ -4,21 +4,26 @@
     <h2>Patient: {{ patient[1] }} {{ patient[2] }}</h2>
     <div style="display: flex; padding: 0 25%;">
         <div style="margin: 0 20px;">
-            <h3>Upcoming Appointments</h3>
-            <table class="table table-primary">
+            <h3>Appointments</h3>
+            <table class="table table-primary" style="box-shadow: 0 2px 2px black; margin: 10px;">
+                <tr>
+                    <th>Date</th>
+                    <th>Doctor</th>
+                    <th>Status</th>
+                </tr>
                 {% for a in appointments %}
                 <tr>
-                    <td>{{a[0]}}</td>
                     <td>{{a[1]}}</td>
+                    <td>{{a[0]}}</td>
                     <td>{{a[2]}}</td>
                 </tr>
                 {% endfor %}
-                <button href="/appointments/new/{{patient[0]}}" class="button">Create Appointment</button>
+                <tr><button class="button"><a href="/appointments/new/{{patient[0]}}">Create Appointment</a></button></tr>
             </table>
         </div>
         <div style="margin: 0 20px;">
             <h3>Prescriptions</h3>
-            <table class="table table-primary">
+            <table class="table table-primary" style="box-shadow: 0 2px 2px black; margin: 10px;">
                 <tr>
                     <th>Medication</th>
                     <th>Generic</th>
@@ -33,6 +38,7 @@
                     <td>{{p[3]}}</td>
                 </tr>
                 {% endfor %}
+                <tr><button class="button"><a href="/prescription/add/{{patient[0]}}">New Prescription</a></button></tr>
             </table>
         </div>
     </div>
