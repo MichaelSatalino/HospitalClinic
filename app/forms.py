@@ -2,6 +2,7 @@ from datetime import date
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SubmitField, StringField, PasswordField, SelectField, ValidationError, BooleanField, DateField
 from wtforms.validators import DataRequired, Optional
+from app.customWidget import ButtonField
 
 def buildLoginForm(data):
     if data=='doctor':
@@ -17,7 +18,7 @@ def buildLoginForm(data):
     return LoginForm()
 
 
-def buildSignupForm(data):
+""" def buildSignupForm(data):
     if data=='doctor':
         class SignupForm(FlaskForm):
             emp_id = StringField('Doctor Employee ID', validators=[DataRequired()])
@@ -34,15 +35,16 @@ def buildSignupForm(data):
             position = StringField('Position', validators=[DataRequired()])
             password = PasswordField('Password', validators=[DataRequired()])
             submit = SubmitField('Log in')
-    return SignupForm()
+    return SignupForm() """
 
 class SelectLoginForm(FlaskForm):
-    account_type = SelectField('Account Type', choices=['doctor', 'nurse'], validators=[DataRequired()])
-    submit = SubmitField('Continue')
+    label = StringField("Select Login Portal")
+    choice_a = ButtonField("doctor")
+    choice_b = ButtonField("nurse")
 
-class SignupAccTypeForm(FlaskForm):
+""" class SignupAccTypeForm(FlaskForm):
     account_type = SelectField('Account Type', choices=['doctor', 'nurse'], validators=[DataRequired()])
-    submit = SubmitField('Continue')
+    submit = SubmitField('Continue') """
 
 class PatientSearchForm(FlaskForm):
     first_name = StringField('First name')

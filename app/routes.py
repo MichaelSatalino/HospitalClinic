@@ -6,7 +6,7 @@ from typing import Optional
 import requests
 from app import app, connection, cursor, users
 from flask import render_template, redirect, url_for, flash, send_file
-from app.forms import buildLoginForm, buildSignupForm,MedicationForm,  SignupAccTypeForm,AddPrescriptionForm,pharmSignupForm, MedicationSearchForm, PatientSearchForm, SignupAccTypeForm, SelectLoginForm, AppointmentSearchForm, SelectDoctorAppointmentForm, CreateAppointmentForm, AppointmentTypeForm, BuildEditAppointmentForm
+from app.forms import buildLoginForm, MedicationForm,  AddPrescriptionForm,pharmSignupForm, MedicationSearchForm, PatientSearchForm,  SelectLoginForm, AppointmentSearchForm, SelectDoctorAppointmentForm, CreateAppointmentForm, AppointmentTypeForm, BuildEditAppointmentForm
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from mysql.connector import Error
@@ -66,13 +66,21 @@ def login():
         return redirect(url_for('index'))
     form = SelectLoginForm()
     if form.validate_on_submit():
+        """
         if form.account_type.data == 'doctor':
             return redirect(url_for('logindoctor'))
         else:
             return redirect(url_for('loginnurse'))
+            """
+        if form.choice_a.data:
+            return redirect(url_for('logindoctor'))
+        else:
+            print('test')
+            return redirect(url_for('loginnurse'))
+        
     return render_template('choose_login.html', form=form, user=None)
 
-@app.route('/signup/doctor', methods=['GET', 'POST'])
+""" @app.route('/signup/doctor', methods=['GET', 'POST'])
 def signup_doctor():
     form = buildSignupForm('doctor')
     if form.validate_on_submit():
@@ -102,7 +110,7 @@ def signup_nurse():
         connection.commit()
         users[int(form.emp_id.data)]=(form.emp_id.data,pward,False)
         return redirect(url_for('loginnurse'))
-    return render_template('signup_nurse.html', form=form, user=None)
+    return render_template('signup_nurse.html', form=form, user=None) """
 
 
 @app.route('/login/doctor', methods=['GET', 'POST'])
@@ -129,14 +137,14 @@ def loginnurse():
     return render_template('login_nurse.html', form=form, user=None, failed=False)
     
 
-@app.route('/signup', methods=['GET', 'POST'])
+""" @app.route('/signup', methods=['GET', 'POST'])
 def signupacctype():
     form = SignupAccTypeForm()
     if form.validate_on_submit():
         if form.account_type.data == 'doctor':
             return redirect(url_for('signup_doctor'))
         return redirect(url_for('signup_nurse'))
-    return render_template('choose_signup.html', form=form, user=None)
+    return render_template('choose_signup.html', form=form, user=None) """
 
 ###########################################################################################################
 #############################       APPOINTMENTS SECTION        ###########################################

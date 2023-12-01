@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS medclinic;
-CREATE DATABASE medclinic;
-USE medclinic;
+DROP DATABASE IF EXISTS hospital_management;
+CREATE DATABASE hospital_management;
+USE hospital_management;
 
 drop table if exists patient;
 Create table Patient (
