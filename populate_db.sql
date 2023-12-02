@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS hospital_management;
-CREATE DATABASE hospital_management;
-USE hospital_management;
+DROP DATABASE IF EXISTS it4mielbsd4n9udu;
+CREATE DATABASE it4mielbsd4n9udu;
+USE it4mielbsd4n9udu;
 
 drop table if exists patient;
 Create table Patient (
@@ -98,44 +98,107 @@ create table Medication (
 medication_id int (10),
 medication_name varchar (25),
 generic varchar (25),
-dosage varchar (20),
 primary key (medication_id)
 );
 
 
 insert into medication
-values (2341,'Penicillin','Liapro','50MG');
+values (2341,'Penicillin','Liapro');
 
 insert into medication
-values (4321,'Vicodin','thiamin','5MG');
+values (4321,'Vicodin','thiamin');
 
 insert into medication
-values (7321,'Tylenol','Thorazin','10MG');
+values (7321,'Tylenol','Thorazin');
 
 insert into medication
-values (8113,'Advil','Morthil','12MG');
+values (8113,'Advil','Morthil');
 
 insert into medication
-values (3391,'Lexapro','Nilthin','15MG');
+values (3391,'Lexapro','Nilthin');
 
 insert into medication
-values (3991,'Amlodipine','Norvasc','20MG');
+values (3991,'Amlodipine','Norvasc');
 insert into medication
-values (3274,'Prednisone','Deltasone','35MG');
-
-insert into medication
-values (1204,'Amoxicillin','Amoxil','38MG');
-
+values (3274,'Prednisone','Deltasone');
 
 insert into medication
-values (1994,'Lisinopril','Zestril','50MG');
+values (1204,'Amoxicillin','Amoxil');
+
 
 insert into medication
-values (3014,'Levothyroxine','Synthroid','50MG');
+values (1994,'Lisinopril','Zestril');
 
 insert into medication
-values (3923,'Virthrol','Teranord','57MG');
+values (3014,'Levothyroxine','Synthroid');
 
+insert into medication
+values (3923,'Virthrol','Teranord');
+
+drop table if exists medication_dose;
+create table medication_dose (
+medication_id int (10),
+dosage varchar (20),
+primary key (medication_id, dosage),
+foreign key (medication_id) references medication(medication_id)
+);
+
+insert into medication_dose
+values (2341,'50MG');
+insert into medication_dose
+values (2341,'25MG');
+
+insert into medication_dose
+values (4321,'5MG');
+insert into medication_dose
+values (4321,'10MG');
+
+insert into medication_dose
+values (7321,'10MG');
+insert into medication_dose
+values (7321,'20MG');
+
+insert into medication_dose
+values (8113,'12MG');
+insert into medication_dose
+values (8113,'24MG');
+
+insert into medication_dose
+values (3391,'15MG');
+insert into medication_dose
+values (3391,'30MG');
+
+insert into medication_dose
+values (3991,'20MG');
+
+insert into medication_dose
+values (3274,'35MG');
+insert into medication_dose
+values (3274,'10MG');
+insert into medication_dose
+values (3274,'70MG');
+
+insert into medication_dose
+values (1204,'38MG');
+insert into medication_dose
+values (1204,'45MG');
+insert into medication_dose
+values (1204,'10MG');
+insert into medication_dose
+values (1204,'75MG');
+
+insert into medication_dose
+values (1994,'50MG');
+
+insert into medication_dose
+values (3014,'50MG');
+
+insert into medication_dose
+values (3923,'57MG');
+insert into medication_dose
+values (3923,'25MG');
+insert into medication_dose
+values (3923,'62MG');
 
 CREATE TABLE Pharmacy (
 pharmacy_id int (10),
@@ -178,96 +241,97 @@ values (6419,'RiteAid','246 Dale Avenue');
 
 
 
-
+drop table if exists Prescription;
 create table Prescription (
 prescription_id int auto_increment,
 pharmacy_id int,
 medication_id int,
 patient_id int,
 date_prescribed date,
-current_diagnosis_severity varchar(20),
 refills int,
+dosage varchar(20),
 primary key (prescription_id),
 foreign key (pharmacy_id) references Pharmacy(pharmacy_id),
 foreign key (patient_id) references Patient(patient_id),
-foreign key (medication_id) references Medication(medication_id)
+foreign key (medication_id) references Medication(medication_id),
+foreign key (medication_id, dosage) references Medication_dose(medication_id, dosage)
 );
 
-insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills)
-values (1234, 2341,11, '2021-01-20',5,3);
+insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills, dosage)
+values (1234, 2341,11, '2021-01-20',3,'50MG');
 
-insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills)
-values (3324, 4321,13, '2022-02-23',4,1);
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage)
+values (3324, 4321,13, '2022-02-23',1,'10MG');
 
-insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills)
-values (1024, 7321,15, '2022-03-09',3,2);
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage)
+values (1024, 7321,15, '2022-03-09',2,'10MG');
 
-insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills)
-values (1908, 8113,18, '2022-04-11',6,3);
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage)
+values (1908, 8113,18, '2022-04-11',3,'12MG');
 
-insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills)
-values (1998, 3391,10, '2021-11-21',4,3);
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage)
+values (1998, 3391,10, '2021-11-21',3,'15MG');
 
-insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills)
-values (3246, 3991,20, '2021-10-11',6,2);
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage)
+values (3246, 3991,20, '2021-10-11',2,'20MG');
 
-insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills)
-values (2364, 3274,23, '2022-05-23',3,1);
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage)
+values (2364, 3274,23, '2022-05-23',1,'70MG');
 
-insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills)
-values (3214, 1204,26, '2022-06-13',7,2);
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage)
+values (3214, 1204,26, '2022-06-13',2,'75MG');
 
-insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills)
-values (1204, 1994,29, '2022-01-23',7,1);
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage)
+values (1204, 1994,29, '2022-01-23',1,'50MG');
 
-insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills)
-values (1999, 3014,31, '2021-11-29',1,4);
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage)
+values (1999, 3014,31, '2021-11-29',4,'50MG');
 
-insert into Prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills)
-values (6419, 3923,36, '2022-10-11',8,5);
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage)
+values (6419, 3923,36, '2022-10-11',5,'25MG');
 
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(1234,2341,38,'2022-11-29',7,2);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(3324,3014,40,'2022-11-30',2,1);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(1024,1994,42,'2022-11-29',5,1);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values
-(1999,3923,44,'2022-11-30',9,4);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values
-(1908,3991,46,'2022-12-01',1,0);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(3246,4321,48,'2022-11-29',2,0);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values
-(3214,3923,50,'2022-11-29',3,0);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(1204,3014,52,'2022-11-30',4,1);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(2364,3274,54,'2022-11-29',9,3);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(1024,3991,56,'2022-12-01',8,1);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values
-(1999,1994,58,'2022-11-30',7,2);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(6419,7321,60,'2022-11-29',5,1);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(2364,8113,62,'2022-11-29',6,3);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(1234,3923,63,'2022-12-01',9,5);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(2364,1994,64,'2022-11-30',8,3);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(1998,3014,66,'2022-11-29',5,1);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values
-(6419,1994,68,'2022-11-30',8,1);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(3214,3274,70,'2022-12-01',7,3);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values
-(1204,3991,72,'2022-12-01',9,7);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(3246,3274,74,'2022-11-29',5,2);
-insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) values 
-(2364,3991,76,'2022-11-29',6,1);
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(1234,2341,38,'2022-11-29',2,'50MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(3324,3014,40,'2022-11-30',1,'50MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(1024,1994,42,'2022-11-29',1,'50MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage) values
+(1999,3923,44,'2022-11-30',4,'25MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage) values
+(1908,3991,46,'2022-12-01',0,'20MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(3246,4321,48,'2022-11-29',0,'10MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage) values
+(3214,3923,50,'2022-11-29',0,'25MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(1204,3014,52,'2022-11-30',1,'50MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(2364,3274,54,'2022-11-29',3,'70MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(1024,3991,56,'2022-12-01',1,'20MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage) values
+(1999,1994,58,'2022-11-30',2,'50MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(6419,7321,60,'2022-11-29',1,'10MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(2364,8113,62,'2022-11-29',3,'12MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(1234,3923,63,'2022-12-01',5,'25MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(2364,1994,64,'2022-11-30',3,'50MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(1998,3014,66,'2022-11-29',1,'50MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage) values
+(6419,1994,68,'2022-11-30',1,'50MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(3214,3274,70,'2022-12-01',3,'70MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage) values
+(1204,3991,72,'2022-12-01',7,'20MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(3246,3274,74,'2022-11-29',2,'70MG');
+insert into prescription (pharmacy_id, medication_id, patient_id, date_prescribed,  refills,dosage) values
+(2364,3991,76,'2022-11-29',1,'20MG');
 
 
 

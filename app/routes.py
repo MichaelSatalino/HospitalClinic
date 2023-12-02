@@ -5,7 +5,7 @@ from os import environ
 from typing import Optional
 import requests
 from app import app, connection, cursor, users
-from flask import render_template, redirect, url_for, flash, send_file
+from flask import render_template, redirect, url_for, flash, send_file, jsonify
 from app.forms import buildLoginForm, MedicationForm,  AddPrescriptionForm,pharmSignupForm, MedicationSearchForm, PatientSearchForm,  SelectLoginForm, AppointmentSearchForm, SelectDoctorAppointmentForm, CreateAppointmentForm, AppointmentTypeForm, BuildEditAppointmentForm
 from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
@@ -58,7 +58,7 @@ def index():
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -79,38 +79,6 @@ def login():
             return redirect(url_for('loginnurse'))
         
     return render_template('choose_login.html', form=form, user=None)
-
-""" @app.route('/signup/doctor', methods=['GET', 'POST'])
-def signup_doctor():
-    form = buildSignupForm('doctor')
-    if form.validate_on_submit():
-        pward = generate_password_hash(form.password.data)
-        executeStr = f"INSERT INTO doctor VALUES (%s,%s,%s,%s,%s,%s)"
-        dept = form.department.data
-        name = form.name.data
-        pos = form.position.data
-        registered = True
-        cursor.execute(executeStr, (int(form.emp_id.data),int(dept), name, pos, registered,pward,))
-        connection.commit()
-        users[int(form.emp_id.data)]=(form.emp_id.data,pward,True)
-        return redirect(url_for('logindoctor'))
-    return render_template('signup_doctor.html', form=form, user=None)
-
-@app.route('/signup/nurse', methods=['GET', 'POST'])
-def signup_nurse():
-    form = buildSignupForm('nurse')
-    if form.validate_on_submit():
-        pward = generate_password_hash(form.password.data)
-        executeStr = f"INSERT INTO nurse VALUES (%s,%s,%s,%s,%s,%s)"
-        dept = form.department.data
-        name = form.name.data
-        pos = form.position.data
-        registered = True
-        cursor.execute(executeStr, (int(form.emp_id.data),int(dept), name, pos, registered,pward,))
-        connection.commit()
-        users[int(form.emp_id.data)]=(form.emp_id.data,pward,False)
-        return redirect(url_for('loginnurse'))
-    return render_template('signup_nurse.html', form=form, user=None) """
 
 
 @app.route('/login/doctor', methods=['GET', 'POST'])
@@ -271,7 +239,7 @@ def create_appointment_time(pat_id, doc_id, date, time):
         executeStr = f"INSERT INTO appointment(patient_id,doctor_employee_id,nurse_employee_id,status,admission_date,discharge_date,admission_type,exam_type) VALUES (%s,%s, null, 'Not started', %s, null, %s, %s)"
         cursor.execute(executeStr, (pat_id, doc_id,f"{date} {time}",form.admission_type.data,form.exam_type.data,))
         connection.commit()
-        return redirect(url_for('search_appointments'))
+        return redirect(url_for('viewpatient',id=pat_id))
     return render_template('app_type_create_appointment.html', form=form, user=current_user)
 
 @login_required
@@ -387,7 +355,7 @@ def viewpatient(id):
     cursor.execute(f"select * from patient where patient_id = {id}")
     patient = cursor.fetchone()
     cursor.execute(f"""
-                        select m.medication_name, m.generic, m.dosage, p.date_prescribed 
+                        select m.medication_name, m.generic, p.dosage, p.date_prescribed 
                         from prescription AS p 
                         JOIN medication AS m ON p.medication_id=m.medication_id 
                         where patient_id = {id}
@@ -491,7 +459,7 @@ def prescriptions_medication(med_id,page):
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
     cursor.execute(f"""
-                    select pa.first_name, pa.last_name, m.dosage, pr.date_prescribed, pr.refills, ph.name, m.medication_name
+                    select pa.first_name, pa.last_name, pr.dosage, pr.date_prescribed, pr.refills, ph.name, m.medication_name
                     from medication AS m 
                     JOIN prescription AS pr ON m.medication_id = pr.medication_id
                     JOIN pharmacy AS ph ON pr.pharmacy_id = ph.pharmacy_id
@@ -514,18 +482,67 @@ def prescriptions_medication(med_id,page):
 @login_required
 @app.route('/prescription/add/<pat_id>', methods=['GET', 'POST'])
 def prescriptionadd(pat_id):
+
     if not current_user.is_authenticated:
         return redirect(url_for('index'))
+    cursor.execute("select distinct name,name from pharmacy")
+    pharm_name = cursor.fetchall()
+    
+    med_name =[]
+    cursor.execute("select medication_name from medication")
+    temp =cursor.fetchall()
+    for med in temp:
+        med_name.append(med[0])
+
+    cursor.execute("select generic from medication")
+    temp=cursor.fetchall()
+    for med in temp:
+        med_name.append(med[0])
+
+    print(medication)
+
     form = AddPrescriptionForm()
+    form.pharmacy_name.choices=pharm_name
+    cursor.execute(f"""select pharmacy_id, address from pharmacy where name='{pharm_name[0][0]}'""")
+    form.pharmacy_address.choices=cursor.fetchall()
     if form.validate_on_submit():
-        executeStr = f"INSERT INTO prescription (pharmacy_id, medication_id, patient_id, date_prescribed, current_diagnosis_severity, refills) VALUES (%s,%s,%s,%s,%s,%s)"
-        Pharmacy_ID = form.pharmacy_id.data
+        executeStr = f"INSERT INTO prescription (pharmacy_id, medication_id, patient_id, date_prescribed, refills,dosage) VALUES (%s,%s,%s,%s,%s,%s)"
+        Pharmacy_ID = form.pharmacy_address.data
         Medication_ID = form.medication_id.data
         Date_Prescribed = date.today()
-        Current_diagnosis_severity = form.diagnosis.data
         refills = form.refills.data
-        cursor.execute(executeStr, (Pharmacy_ID, Medication_ID,pat_id,Date_Prescribed, Current_diagnosis_severity,refills,))
+        dosage = form.dosage.data
+        print("success")
+        cursor.execute(executeStr, (Pharmacy_ID, Medication_ID,pat_id,Date_Prescribed, refills,dosage))
         connection.commit()
-        return redirect(url_for('index'))
-    return render_template('prescriptadd_results.html', form=form, user=current_user)
+        return redirect(url_for('viewpatient', id=pat_id))
+    else:
+        print("fail")
+    return render_template('prescriptadd_results.html', form=form, user=current_user, med_name=med_name)
 
+@login_required
+@app.route('/pharmacy/<name>')
+def pharmacyAddr(name):
+    cursor.execute(f"""select pharmacy_id, address from pharmacy where name='{name}'""")
+    pharm=cursor.fetchall()
+    pharmArray =[]
+    for p in pharm:
+        pharmObj={}
+        pharmObj['id']=p[0]
+        pharmObj['address']=p[1]
+        pharmArray.append(pharmObj)
+    return jsonify({'pharms':pharmArray})
+
+@login_required
+@app.route('/dosage/<name>')
+def getDosage(name):
+    cursor.execute(f"""select dosage, medication.medication_id from (medication inner join medication_dose on  medication.medication_id = medication_dose.medication_id) 
+    where (medication_name='{name}' or generic='{name}')""")
+    doses=cursor.fetchall()
+    doseArray=[]
+    for d in doses:
+        dObj={}
+        dObj['dose']=d[0]
+        dObj['id']=d[1]
+        doseArray.append(dObj)
+    return jsonify({'doses':doseArray})

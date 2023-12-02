@@ -1,6 +1,6 @@
 from datetime import date
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SubmitField, StringField, PasswordField, SelectField, ValidationError, BooleanField, DateField
+from wtforms import StringField, IntegerField,HiddenField, SubmitField, StringField, PasswordField, SelectField, ValidationError, BooleanField, DateField
 from wtforms.validators import DataRequired, Optional
 from app.customWidget import ButtonField
 
@@ -101,11 +101,16 @@ def pharmSignupForm(data):
     return SignupForm()
 
 class AddPrescriptionForm(FlaskForm):
-    pharmacy_id = StringField('Pharmacy_ID', validators=[DataRequired()])
-    medication_id = StringField('Medication_ID', validators=[DataRequired()])
-    diagnosis = StringField('Diagnosis Severity', validators=[DataRequired()])
+    pharmacy_name =SelectField('Pharmacy Name', choices=[],validators=[DataRequired()])
+    pharmacy_address =SelectField('Pharmacy Address', choices=[],validators=[DataRequired()], validate_choice=False)    
+    
+    medication_name = StringField('Medication Name', validators=[DataRequired()])
+    dosage = SelectField("Medication Dosage", choices=[], validators=[DataRequired()], validate_choice=False)
     refills = StringField('Refills', validators=[DataRequired()])
+    medication_id=HiddenField()
     submit = SubmitField('Add')
+
+
 
 class AppointmentTypeForm(FlaskForm):
     admission_type = StringField('Admission Type')
